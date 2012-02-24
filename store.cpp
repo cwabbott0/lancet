@@ -31,7 +31,8 @@ void Store::makeDiff()
     {
         maxlen = (maxlen > qbas[loopc].size()) ? maxlen : qbas[loopc].size();
     }
-
+    
+    lockWrite();
     width = qbas.size();
     height = maxlen * BITS_IN_BYTE;
     
@@ -69,7 +70,6 @@ void Store::makeDiff()
         {
             if (initial != at(loopc2, loopc))
             {
-                printf("Woo found a difference %d %d %d\n", loopc2, loopc, height);
                 diff[loopc] = true;
                 break;
             }
@@ -77,5 +77,6 @@ void Store::makeDiff()
     }
     
     qbas.clear();
+    unlock();
     emit dataChanged();
 }

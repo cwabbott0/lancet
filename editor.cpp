@@ -1,5 +1,7 @@
 #include "editor.h"
 #include "store.h"
+#include "log.h"
+#include "diffwindow.h"
 
 QByteArray EditorThread::getData(int num, QString input)
 {
@@ -14,23 +16,52 @@ QByteArray EditorThread::getData(int num, QString input)
     qts << input;
     input_file.close();
 
-    args.clear();
-    args.push_back(inputf);
-    args.push_back(outputf);
+    QStringList pargs;
+    pargs.push_back(inputf);
+    pargs.push_back(outputf);
+    pargs.append(args);
     QProcess * process = new QProcess();
-    process->start(helper, args);
-    process->waitForFinished();
 
+    QString start = "Invoking: " + helper + " ";
+    for (int loopc=0; loopc<pargs.size(); loopc++)
+    {
+        start += pargs[loopc];
+        start += " ";
+    }
+    start += "\n";
+    emit progress_detail(start);
+
+    process->setProcessChannelMode(QProcess::MergedChannels);
+    process->start(helper, pargs);
+    if (!process->waitForFinished())
+    {
+        emit progress_detail("<font color='red'>Failure</font>");
+    }
+    emit progress_detail(process->readAll());
+    
     QFile shader_file("/tmp/"+outputf);
-    shader_file.open(QFile::ReadOnly);
-    ret = shader_file.readAll();
-    printf("Got %d bytes\n", ret.size());
+    if (!shader_file.open(QFile::ReadOnly))
+    {
+        emit progress_detail("Could not open "+shader_file.fileName());
+    }
+    else
+    {
+        ret = shader_file.readAll(); 
+        QString bytes_got = "Got " + QString::number(ret.size()) + "bytes\n";
+        emit progress_detail(bytes_got);
+    }
+    
     return ret;
 }
 
 void EditorThread::run()
 {
     store->clear();
+    if (subs.size() == 0)
+    {
+        subs.push_back("$");  // Null operation
+    }
+    
     for (int loopc=0; loopc<subs.size(); loopc++)
     {
         emit progress(QString("Processing ")+subs[loopc]);
@@ -49,12 +80,14 @@ Editor::Editor()
     edit->setAcceptRichText(false);
     
     helper = new QLineEdit("./helper.sh");
-    args = new QLineEdit("-f");
+    args = new QLineEdit("-v");
     subs = new QLineEdit;
     go = new QPushButton("Go");
+    new_diff = new QPushButton("New diff");
     setStatusBar(new QStatusBar());
     setCentralWidget(edit);
     connect(go, SIGNAL(clicked()), this, SLOT(goPressed()));
+    connect(new_diff, SIGNAL(clicked()), this, SLOT(newDiffPressed()));
     QToolBar * tb = new QToolBar();
     addToolBar(tb);
     tb->addWidget(new QLabel("Helper"));
@@ -63,6 +96,7 @@ Editor::Editor()
     tb->addWidget(args);
     tb->addWidget(new QLabel("Subs"));
     tb->addWidget(subs);
+    tb->addWidget(new_diff);
     tb->addWidget(go);
 
     QFile test_file("shader.txt");
@@ -75,6 +109,13 @@ Editor::Editor()
     setWindowTitle("Editor");
 }
 
+void Editor::newDiffPressed()
+{
+    DiffWindow * dw = new DiffWindow();
+    dw->updateDisplay();
+    dw->show();
+}
+
 void Editor::goPressed()
 {
     EditorThread * et = new EditorThread(helper->text(),
@@ -85,6 +126,14 @@ void Editor::goPressed()
     connect(et, SIGNAL(progress(const QString &)),
             statusBar(), SLOT(showMessage(const QString &)),
             Qt::QueuedConnection);
+
+    if (log)
+    {
+        connect(et, SIGNAL(progress_detail(const QString &)),
+                log, SLOT(append(const QString &)),
+                Qt::QueuedConnection);
+    }
     
+    log->clear();
     et->start();
 }

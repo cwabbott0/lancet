@@ -35,6 +35,7 @@ void DiffWindow::updateDisplay()
         return;
     }
 
+    store->lockRead();
     QStringList headers;
 
     int real_rows = 0;
@@ -77,6 +78,7 @@ void DiffWindow::updateDisplay()
         }
         current_display_column += 2;
     }
+    store->unlock();
     main_widget->setRowCount(real_rows);
     main_widget->setHorizontalHeaderLabels(headers);
 }

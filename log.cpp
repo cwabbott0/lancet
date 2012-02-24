@@ -3,6 +3,7 @@
 
 Log::Log()
 {
+    setWindowTitle("Log");
     log = this;
 }
 

@@ -35,6 +35,7 @@ class EditorThread  : public QThread
 
     void done();
     void progress(const QString &);
+    void progress_detail(const QString &);
     
   protected:
     
@@ -59,6 +60,7 @@ class Editor : public QMainWindow
     public slots:
 
     void goPressed();
+    void newDiffPressed();
     
   protected:
 
@@ -67,6 +69,7 @@ class Editor : public QMainWindow
     QLineEdit * args;
     QLineEdit * subs;
     QPushButton * go;
+    QPushButton * new_diff;
     
 };
 

@@ -5,6 +5,7 @@
 #include <QtCore/QList>
 #include <QtCore/QString>
 #include <QtCore/QObject>
+#include <QtCore/QReadWriteLock>
 
 #include <stdio.h>
 
@@ -45,6 +46,21 @@ class Store : public QObject
         }
         return diff[r];
     }
+
+    void lockRead()
+    {
+        lock.lockForRead();
+    }
+    
+    void lockWrite()
+    {
+        lock.lockForWrite();
+    }
+
+    void unlock()
+    {
+        lock.unlock();
+    }
     
   signals:
 
@@ -52,6 +68,8 @@ class Store : public QObject
     
   protected:
 
+    QReadWriteLock lock;
+    
     QList<QString> names;
     QList<QByteArray> qbas;
 

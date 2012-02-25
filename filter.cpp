@@ -75,7 +75,6 @@ QString HexFilter::parse(int & bitpos, int column, bool & was_diff)
     {
         for(int loopc = bitpos + size - 8; loopc>=bitpos; loopc-=8)
         {
-            printf("%d %d\n", bitpos, loopc);
             ret += extract_byte(loopc, column, was_diff);
         }
     }

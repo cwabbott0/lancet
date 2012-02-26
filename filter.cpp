@@ -101,15 +101,18 @@ QString FloatFilter::parse(int & bitpos, int column, bool & was_diff)
     BitList bits = store->getBits(column, bitpos, size, little_endian);
     BitList diffs = store->getDiffs(bitpos, size, little_endian);
 
+    QString ret;
+    
     for (int loopc=0; loopc<diffs.size(); loopc++)
     {
         if (diffs[loopc])
         {
             was_diff = true;
+            ret += beginHighlight();
+            break;
         }    
     }
 
-    QString ret;
     bool sign = bits[0];
     if (sign)
     {
@@ -117,10 +120,10 @@ QString FloatFilter::parse(int & bitpos, int column, bool & was_diff)
     }
     
     unsigned int exp_int = 0;
-    for (int loopc2=0; loopc2<exponent; loopc2++)
+    for (int loopc=0; loopc<exponent; loopc++)
     {
         exp_int = exp_int << 1;
-        exp_int |= bits[loopc2+1] ? 0x1 : 0x0;
+        exp_int |= bits[loopc+1] ? 0x1 : 0x0;
     }
 
     unsigned int mant_int = 0;
@@ -154,6 +157,11 @@ QString FloatFilter::parse(int & bitpos, int column, bool & was_diff)
     ret += QString::number(fresult);
 
     bitpos += size;
+
+    if (was_diff)
+    {
+        ret += endHighlight();
+    }
     
     return ret;
 }

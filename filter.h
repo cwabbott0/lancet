@@ -23,6 +23,16 @@ class Filter
     
     unsigned char getByte(BitList list, BitList diffs, int & pos,
                           bool & diff);
+
+    QString beginHighlight()
+    {
+        return "<font color=\"red\"><b>";
+    }
+
+    QString endHighlight()
+    {
+        return "</b></font>";
+    }
     
     QString name;
     

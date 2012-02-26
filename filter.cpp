@@ -69,7 +69,7 @@ QString HexFilter::extract_byte(int bitpos, int column, bool & was_diff)
 
         if (was_diff)
         {
-            ret += "<font color=\"red\"><b>";
+            ret += beginHighlight();
         }
         
         int i;
@@ -82,7 +82,7 @@ QString HexFilter::extract_byte(int bitpos, int column, bool & was_diff)
         
         if (was_diff)
         {
-            ret += "</b></font>";
+            ret += endHighlight();
         }
 
         bitpos += 4;
@@ -110,7 +110,7 @@ QString HexFilter::parse(int & bitpos, int column, bool & was_diff)
 
         if (nybble_diff)
         {
-            ret += "<font color=\"red\"><b>";
+            ret += beginHighlight();
             was_diff = true;
         }
         
@@ -124,7 +124,7 @@ QString HexFilter::parse(int & bitpos, int column, bool & was_diff)
             
         if (nybble_diff)
         {
-            ret += "</b></font>";
+            ret += endHighlight();
         }
     }
 

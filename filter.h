@@ -4,6 +4,8 @@
 #include <QtCore/QString>
 #include <QtCore/QMap>
 
+#include "store.h"
+
 class Filter
 {
   public:
@@ -18,7 +20,10 @@ class Filter
     virtual QString parse(int &, int, bool & w) { w=false; return ""; }
     
   protected:
-
+    
+    unsigned char getByte(BitList list, BitList diffs, int & pos,
+                          bool & diff);
+    
     QString name;
     
 };

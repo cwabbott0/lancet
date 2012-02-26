@@ -11,6 +11,8 @@
 
 #define BITS_IN_BYTE 8  // Never know, could be looking at a VAX!
 
+typedef QList<bool> BitList;
+
 class Store : public QObject
 {
     Q_OBJECT
@@ -24,12 +26,15 @@ class Store : public QObject
 
     int getNumColumns() { return width; }
     int getNumRows() { return height; }
-    
+
+    BitList getBits(int column, int start, int len, bool little_endian);
+    BitList getDiffs(int start, int len, bool litle_endian);
+        
     QList<QString> getNames() { return names; }
     
     bool at(int c,int r)
     {
-        if (c*r > (width * height))
+        if (c > width || r > height || c < 0 || r < 0)
         {
             printf("Store bounds error!\n");
             return false;
@@ -39,7 +44,7 @@ class Store : public QObject
     
     bool isDiff(int r)
     {
-        if (r > height)
+        if (r > height || r < 0)
         {
             printf("Diff bounds error!\n");
             return false;

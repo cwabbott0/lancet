@@ -68,6 +68,12 @@ void DiffWindow::updateDisplay()
             QFont font;
             font.setFixedPitch(true);
             label->setFont(font);
+            if (diff)
+            {
+                label->setAutoFillBackground(true);
+                label->setStyleSheet("QLabel { background-color: rgb("
+                                     "255,200,200); }");
+            } 
             main_widget->setCellWidget(current_row, current_display_column+1,
                                        label);
             current_row++;

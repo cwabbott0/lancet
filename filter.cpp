@@ -119,14 +119,14 @@ QString FloatFilter::parse(int & bitpos, int column, bool & was_diff)
         ret += "-";
     }
     
-    unsigned int exp_int = 0;
+    quint64 exp_int = 0;
     for (int loopc=0; loopc<exponent; loopc++)
     {
         exp_int = exp_int << 1;
         exp_int |= bits[loopc+1] ? 0x1 : 0x0;
     }
 
-    unsigned int mant_int = 0;
+    quint64 mant_int = 0;
     for (int loopc=0; loopc<mantissa; loopc++)
     {
         mant_int = mant_int << 1;

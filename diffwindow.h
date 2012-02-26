@@ -18,7 +18,7 @@ class DiffWindow : public QMainWindow
     void updateDisplay();
 
   protected:
-
+    
     QComboBox * filter;
     QTableWidget * main_widget;
     

@@ -24,6 +24,7 @@ DiffWindow::DiffWindow()
     setWindowTitle("Diff");
     connect(filter, SIGNAL(currentIndexChanged(int)),
             this, SLOT(updateDisplay()));
+    resize(640,480);  // Just to be a bit more sensible
 }
 
 void DiffWindow::updateDisplay()
@@ -87,6 +88,12 @@ void DiffWindow::updateDisplay()
     store->unlock();
     main_widget->setRowCount(real_rows);
     main_widget->setHorizontalHeaderLabels(headers);
+    main_widget->resizeColumnsToContents();
+    main_widget->resizeRowsToContents();
 }
+
+
+
+
 
 

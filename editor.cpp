@@ -22,13 +22,13 @@ QByteArray EditorThread::getData(int num, QString input)
     pargs.append(args);
     QProcess * process = new QProcess();
 
-    QString start = "Invoking: " + helper + " ";
+    QString start = "<font color='blue'>Invoking: " + helper + " ";
     for (int loopc=0; loopc<pargs.size(); loopc++)
     {
         start += pargs[loopc];
         start += " ";
     }
-    start += "\n";
+    start += "</font>\n";
     emit progress_detail(start);
 
     process->setProcessChannelMode(QProcess::MergedChannels);
@@ -136,4 +136,21 @@ void Editor::goPressed()
     
     log->clear();
     et->start();
+
+        /* Test for floating point
+    store->clear();
+    float test = 0.0;
+    QByteArray qba((const char *)&test, sizeof(test));
+    store->addArray("0.0", qba);
+    float test2 = 1.0;
+    QByteArray qba2((const char *)&test2, sizeof(test2));
+    store->addArray("1.0", qba2);
+    float test3 = 2.0;
+    QByteArray qba3((const char *)&test3, sizeof(test3));
+    store->addArray("2.0", qba3);
+    float test4 = -4.0;
+    QByteArray qba4((const char *)&test4, sizeof(test4));
+    store->addArray("-4.0", qba4);
+    store->makeDiff();
+        */
 }

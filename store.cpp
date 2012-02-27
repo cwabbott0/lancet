@@ -80,3 +80,63 @@ void Store::makeDiff()
     unlock();
     emit dataChanged();
 }
+
+BitList Store::getBits(int column, int start, int len, bool little_endian)
+{
+    BitList ret;
+    
+    if (little_endian)
+    {
+        for(int loopc = start + len - BITS_IN_BYTE; loopc>=start;
+            loopc-=BITS_IN_BYTE)
+        {
+            for (int loopc2=0; loopc2<BITS_IN_BYTE; loopc2++)
+            {
+                ret.push_back(at(column, loopc+loopc2));
+            }
+        }
+    }
+    else
+    {
+        for(int loopc = start; loopc < start + len; loopc+=BITS_IN_BYTE)
+        {
+            for (int loopc2=0; loopc2<BITS_IN_BYTE; loopc2++)
+            {
+                ret.push_back(at(column, loopc+loopc2));
+            }
+        }
+    }
+
+    return ret;
+}
+
+BitList Store::getDiffs(int start, int len, bool little_endian)
+{
+    BitList ret;
+    
+    if (little_endian)
+    {
+        for(int loopc = start + len - BITS_IN_BYTE; loopc>=start;
+            loopc-=BITS_IN_BYTE)
+        {
+            for (int loopc2=0; loopc2<BITS_IN_BYTE; loopc2++)
+            {
+                ret.push_back(isDiff(loopc+loopc2));
+            }
+        }
+    }
+    else
+    {
+        for(int loopc = start; loopc < start+len; loopc+=BITS_IN_BYTE)
+        {
+            for (int loopc2=0; loopc2<BITS_IN_BYTE; loopc2++)
+            {
+                ret.push_back(isDiff(loopc+loopc2));
+            }
+        }
+    }
+
+    return ret;
+}
+
+        
